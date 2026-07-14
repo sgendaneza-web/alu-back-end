@@ -1,4 +1,27 @@
-#!usr/bin/python3
+#!/usr/bin/python3
+"""
+a Python script that, using this REST API,
+https://jsonplaceholder.typicode.com/path/?query#fragments
+for a given employee ID, returns information about his/her
+TODO list progress.
+
+Requirements:
+use urllib or requests module
+The script must accept an integer as a parameter,
+which is the employee ID
+The script must display on the standard output the
+employee TODO list progress in this exact format:
+
+First line: Employee EMPLOYEE_NAME is done with
+tasks(NUMBER_OF_DONE_TASKS/TOTAL_NUMBER_OF_TASKS):
+EMPLOYEE_NAME: name of the employee
+NUMBER_OF_DONE_TASKS: number of completed tasks
+TOTAL_NUMBER_OF_TASKS: total number of tasks, which is
+the sum of completed and non-completed tasks
+
+Second and N next lines display the title of completed tasks:
+TASK_TITLE (with 1 tabulation and 1 space before the TASK_TITLE)
+"""
 if __name__ == "__main__":
     import json
     import sys
@@ -37,39 +60,4 @@ if __name__ == "__main__":
     print(f"Employee {employee_name} is done with tasks({no_of_comptasks}/\
 {totalno_of_task}):")
     for comp_tasks in completed_tasks:
-        print(f"\t {comp_tasks['title']}")#!/usr/bin/python3
-"""Script to get todos for a user from API"""
-
-import requests
-import sys
-
-
-def main():
-    """main function"""
-    user_id = int(sys.argv[1])
-    todo_url = 'https://jsonplaceholder.typicode.com/todos'
-    user_url = 'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)
-
-    response = requests.get(todo_url)
-
-    total_questions = 0
-    completed = []
-    for todo in response.json():
-
-        if todo['userId'] == user_id:
-            total_questions += 1
-
-            if todo['completed']:
-                completed.append(todo['title'])
-
-    user_name = requests.get(user_url).json()['name']
-
-    printer = ("Employee {} is done with tasks({}/{}):".format(user_name,
-               len(completed), total_questions))
-    print(printer)
-    for q in completed:
-        print("\t {}".format(q))
-
-
-if __name__ == '__main__':
-    main()
+        print(f"\t {comp_tasks['title']}")
