@@ -1,64 +1,31 @@
 #!/usr/bin/python3
-
-
-"""
-Retrieve and display the todo list progress for a specific employee.
-
-Args:
-employee_id (int): The ID of the employee for whom to fetch progress.
-
-Returns:
-None
-"""
+""" Library to gather data from an API """
 
 import requests
 import sys
 
+""" Script to return a given employee ID
+together with their TODO list progress
+"""
+
 if __name__ == "__main__":
-
-    """
-    Gets the employee ID
-
-    Puts the links of APIs into variables
-
-    Retrieves data from the API and parses the data
-
-    Uses the data to generate a progress report for each employee
-    """
-
-    # Check for the correct number of arguments
-    if len(sys.argv) != 2:
-        print("Usage: ./0-gather_data_from_an_API.py <employee_id>")
-        sys.exit(1)
-
-    # Get the employee ID from the command line argument
     employee_id = sys.argv[1]
+    url = "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
 
-    # Define the API endpoints for todos and users
-    todo_url = 'https://jsonplaceholder.typicode.com/todos'
-    user_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}'
+    todo = "https://jsonplaceholder.typicode.com/todos?userId={}"
+    todo = todo.format(employee_id)
 
-    # Send HTTP GET requests to retrieve data from the API
-    todo_response = requests.get(todo_url)
-    user_response = requests.get(user_url)
+    user_info = requests.request("GET", url).json()
+    todo_info = requests.request("GET", todo).json()
 
-    # Parse the JSON responses into Python dictionaries
-    todo_data = todo_response.json()
-    user_data = user_response.json()
+    employee_name = user_info.get("name")
+    total_tasks = list(filter(lambda x: (x["completed"] is True), todo_info))
+    task_com = len(total_tasks)
+    total_task_done = len(todo_info)
 
-    if 'name' in user_data:
-        name = user_data['name']
-
-    # Filter completed and total tasks for the specified employee
-    completed_tasks = [task for task in todo_data
-                       if task['userId'] == int(employee_id) and
-                       task['completed']]
-    total_tasks = [task for task in todo_data
-                   if task['userId'] == int(employee_id)]
-
-    # Display the employee's todo list progress
-    fin = len(completed_tasks)
-    sum = len(total_tasks)
-    print(f"Employee {name} is done with tasks({fin}/{sum}):")
-    for task in completed_tasks:
-        print("\t " + task['title'])
+    print(
+        "Employee {} is done with tasks({}/{}):".format(
+            employee_name, task_com, total_task_done
+        )
+    )
+    [print("\t {}".format(task.get("title"))) for task in total_tasks]
